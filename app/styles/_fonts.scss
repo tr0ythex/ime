@@ -1,0 +1,28 @@
+@font-face {
+    font-family: "Circe-Bold";
+    src: url("../fonts/circe-bold.eot");
+    src: url("../fonts/circe-bold.eot?#iefix") format("embedded-opentype"),
+         url("../fonts/circe-bold.woff2") format("woff2"),
+         url("../fonts/circe-bold.woff") format("woff"),
+         url("../fonts/circe-bold.ttf") format("ttf"),
+         url("../fonts/circe-bold.svg#Circe-Bold") format("svg");
+    font-style: normal;
+    font-weight: 700;
+}
+@font-face {
+    font-family: "Circe-Light";
+    src: url("../fonts/circe-light.eot");
+    src: url("../fonts/circe-light.eot?#iefix") format("embedded-opentype"),
+         url("../fonts/circe-light.woff2") format("woff2"),
+         url("../fonts/circe-light.woff") format("woff"),
+         url("../fonts/circe-light.ttf") format("ttf"),
+         url("../fonts/circe-light.svg#Circe-Light") format("svg");
+    font-style: normal;
+    font-weight: 300;
+}
+.circe-bold {
+font-family: Circe-Bold;
+}
+.circe-light {
+font-family: Circe-Light;
+}

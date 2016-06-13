@@ -171,3 +171,68 @@ gulp.task('build', ['lint', 'html', 'images', 'fonts', 'extras'], () => {
 gulp.task('default', ['clean'], () => {
   gulp.start('build');
 });
+
+// ---------------------------------------------------
+// generate all kinds of fonts from .otf, .ttf fonts
+// create @font-face's and classes for generated fonts
+var fontgen = require('gulp-fontgen');
+var concat = require('gulp-concat');
+var clean = require('gulp-clean');
+
+// 1) Generate fonts from .otf/.ttf to the same folder
+gulp.task('fontgen', function() {
+  return gulp.src("./app/fonts/*.{ttf,otf}")
+    .pipe(fontgen({
+      dest: "./app/fonts/",
+      css_fontpath: "../fonts",
+    }))
+});
+
+// 2) Create one file for all fonts from generated font css files,
+//    place it in app/styles folder
+//    and append classes for all font (such as .circe-bold or circe-light)
+gulp.task('create-font-file', ['fontgen'], function() {
+  // creates classes for each font
+  function createFontClasses(fileContent) {
+    var regexp = /font-family\s*:\s*["'](.*)"/g;
+    var matches = [];
+    var fontClasses = '';
+
+    while ( (matches = regexp.exec(fileContent)) ) {
+      fontClasses += `
+.${matches[1].toLowerCase()} {
+font-family: ${matches[1]};
+}`;
+    }
+
+    return fontClasses;
+  }
+
+  // appends classes for each font to _fonts.scss
+  // transform function for gulp's pipe
+  function appendFontClasses() {
+
+    function transform(file, cb) {
+      file.contents = new Buffer(
+          String(file.contents) +
+          createFontClasses(file.contents))ж
+      cb(null, file);
+    }
+
+    return require('event-stream').map(transform);
+  }
+
+  gulp.src('app/fonts/*.css')
+    .pipe(concat('_fonts.scss'))
+    .pipe(appendFontClasses())
+    .pipe(gulp.dest('app/styles/'));
+});
+
+// 3) Remove original font css files
+gulp.task('remove-font-css', ['fontgen', 'create-font-file'], function() {
+  gulp.src('app/fonts/*.css')
+    .pipe(clean());
+});
+
+// Union task of previous three
+gulp.task('build-font-styles', ['fontgen', 'create-font-file', 'remove-font-css']);
